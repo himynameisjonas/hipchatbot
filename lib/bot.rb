@@ -47,7 +47,6 @@ class Bot
   end
   
   def join_rooms
-    salutation = config['nick'].split(/\s+/).first
     config['rooms'].each do |room|
       muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config['nick'])
       muc.on_message do |time, nick, text|
@@ -62,6 +61,7 @@ class Bot
   end
 
   def handle_message(nick, text, muc)
+    salutation = config['nick'].split(/\s+/).first
     message = Message.new({
       :message => text,
       :muc => muc
