@@ -1,4 +1,4 @@
-class Say < Bot::Command
+class Spotify < Bot::Command
   respond_to "next", "prev", "play", "pause", "track"
   require 'appscript'
   
@@ -28,6 +28,6 @@ class Say < Bot::Command
   end
 
   def self.description
-    "Controll spotify with \"next\", \"prev\", \"play\", \"pause\", \"track\""
+    "Controll spotify"
   end
 end
