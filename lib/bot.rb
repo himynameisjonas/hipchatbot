@@ -32,6 +32,7 @@ class Bot
 
   def run
     connect
+    join_rooms
     warn "running"
     loop { sleep 1 }
   end
@@ -42,9 +43,10 @@ class Bot
     client.connect
     client.auth(config['password'])
     client.send(Jabber::Presence.new.set_type(:available))
-
+  end
+  
+  def join_rooms
     salutation = config['nick'].split(/\s+/).first
-
     config['rooms'].each do |room|
       muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config['nick'])
       muc.on_message do |time, nick, text|
@@ -64,7 +66,6 @@ class Bot
       end
       mucs << muc
     end
-    self
   end
 
   def process(message)

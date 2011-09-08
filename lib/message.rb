@@ -7,7 +7,7 @@ class Bot::Message
     end
   end
 
-  def respond(message)
+  def send(message)
     muc.send Jabber::Message.new(muc.room, message)
   end
 end
