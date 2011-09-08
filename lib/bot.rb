@@ -55,40 +55,6 @@ class Bot
   def process(from, command, muc)
     warn "command: #{from}> #{command}"
     firstname = from.split(/ /).first
-
-    # case command
-    #   # Speech
-    # when /^(hey|hi|hello|sup|what's up|what's happenin(|g)|yo)(|[!?])$/ then
-    #   respond "Yoyoyo #{firstname}, what it is?", muc
-    # 
-    # when /I love you/i then
-    #   respond "Awww, I love you too #{firstname}!", muc
-    # 
-    # when /you're the best/i then
-    #   respond "Well shit, #{firstname}, don't I know it!", muc
-    # 
-    #   # Commands
-    # when /^echo\s+([^\s].*)$/ then
-    #   respond "#{from}: #{$1}", muc
-    # 
-    # when /^weather\s+([^\s]+)/ then
-    #   query = 'select item from weather.forecast where location = "' + $1 + '"'
-    #   uri   = 'http://query.yahooapis.com/v1/public/yql?format=json&q=' + CGI.escape(query)
-    #   data  = JSON.parse open(uri).read
-    # 
-    #   item      = data["query"]["results"]["channel"]["item"]
-    #   title     = item["title"]
-    #   condition = item["condition"]
-    # 
-    #   response = title
-    #   response += " are " + condition['temp'] + ' degrees and ' + condition['text'] if condition
-    # 
-    #   respond response, muc
-    # 
-    # else
-    #   respond "#{from}: what?", muc
-    # end
-    
     Bot::Command.delegate_command(command, firstname, self, muc)
   end
 
