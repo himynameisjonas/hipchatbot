@@ -67,7 +67,7 @@ class Bot
       :muc => muc
     })
     Bot::MONITORS.each {|command| command.respond(message)} unless nick == config['nick']
-    next unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
+    return unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
     command, *command_message = $1.split(" ")
     message = Message.new({
       :from => firstname = nick.split(/ /).first,
