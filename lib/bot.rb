@@ -14,6 +14,7 @@ class Bot
   attr_accessor :config, :client, :mucs
   
   COMMANDS = {}
+  MONITORS = []
   
   Dir.glob("lib/commands/**/*.rb").each do |file|
     require File.expand_path(File.join(File.dirname(__FILE__), "..", file))
@@ -50,22 +51,31 @@ class Bot
     config['rooms'].each do |room|
       muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config['nick'])
       muc.on_message do |time, nick, text|
-        next unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
         begin
-          command, *command_message = $1.split(" ")
-          message = Message.new({
-            :from => firstname = nick.split(/ /).first,
-            :command => command,
-            :message => command_message.join(" "),
-            :muc => muc
-          })
-          process(message)
+          handle_message nick, text, muc
         rescue => e
           warn "exception: #{e.inspect}"
         end
       end
       mucs << muc
     end
+  end
+
+  def handle_message(nick, text, muc)
+    message = Message.new({
+      :message => text,
+      :muc => muc
+    })
+    Bot::MONITORS.each {|command| command.respond(message)} unless nick == config['nick']
+    next unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
+    command, *command_message = $1.split(" ")
+    message = Message.new({
+      :from => firstname = nick.split(/ /).first,
+      :command => command,
+      :message => command_message.join(" "),
+      :muc => muc
+    })
+    process(message)
   end
 
   def process(message)

@@ -9,6 +9,10 @@ class Bot::Command
     end
   end
 
+  def self.monitor_all
+    Bot::MONITORS << self
+  end
+
   def self.delegate_command(message)
     warn "delegates command #{message.command}"
     return false if Bot::COMMANDS[message.command].nil?
