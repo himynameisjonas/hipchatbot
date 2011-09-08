@@ -1,0 +1,9 @@
+basic:
+  server: 'example.com'
+  rooms:
+    - 'room1@example.com'
+    - 'room2@example.com'
+  nick: 'Bot bot'
+  jid: 'xxxx@example.com'
+  password: 'supersecret'
+  debug: false

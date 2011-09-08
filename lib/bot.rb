@@ -19,25 +19,34 @@ class Bot
     require File.expand_path(File.join(File.dirname(__FILE__), "..", file))
   end
 
-  def initialize(config)
-    self.config = config
-    self.client = Jabber::Client.new(config[:jid])
+  def initialize(settings)
+    self.config = settings['basic']
+    self.client = Jabber::Client.new(config['jid'])
     self.mucs   = []
-    if Jabber.logger = config[:debug]
+    if config['debug']
+      Jabber.logger = Logger.new(STDOUT)
       Jabber.debug = true
     end
     self
   end
 
+  def run
+    connect
+    warn "running"
+    loop { sleep 1 }
+  end
+
+  private
+
   def connect
     client.connect
-    client.auth(config[:password])
+    client.auth(config['password'])
     client.send(Jabber::Presence.new.set_type(:available))
 
-    salutation = config[:nick].split(/\s+/).first
+    salutation = config['nick'].split(/\s+/).first
 
-    config[:rooms].each do |room|
-      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config[:nick])
+    config['rooms'].each do |room|
+      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config['nick'])
       muc.on_message do |time, nick, text|
         next unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
         begin
