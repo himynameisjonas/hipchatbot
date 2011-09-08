@@ -3,6 +3,7 @@ GEM
   specs:
     json (1.5.1)
     rake (0.9.2)
+    rb-appscript (0.6.1)
     xmpp4r (0.5)
 
 PLATFORMS
@@ -11,4 +12,5 @@ PLATFORMS
 DEPENDENCIES
   json
   rake
+  rb-appscript
   xmpp4r
