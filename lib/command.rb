@@ -9,10 +9,9 @@ class Bot::Command
     end
   end
 
-  def self.delegate_command(command, firstname, bot, muc)
-    puts "delegate"
-    puts "#{Bot::COMMANDS[command].nil?}"
-    return false if Bot::COMMANDS[command].nil?
-    Bot::COMMANDS[command].respond(command, firstname, bot, muc)
+  def self.delegate_command(message)
+    warn "delegates command #{message.command}"
+    return false if Bot::COMMANDS[message.command].nil?
+    Bot::COMMANDS[message.command].respond(message)
   end
 end

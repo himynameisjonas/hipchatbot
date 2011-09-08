@@ -9,6 +9,7 @@ require 'lib/muc-patch'
 
 class Bot
   require 'lib/command'
+  require 'lib/message'
   
   attr_accessor :config, :client, :mucs
   
@@ -36,39 +37,30 @@ class Bot
     salutation = config[:nick].split(/\s+/).first
 
     config[:rooms].each do |room|
-      mucs << Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config[:nick])
-    end
-
-    mucs.each do |muc|
+      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config[:nick])
       muc.on_message do |time, nick, text|
         next unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
         begin
-          process(nick, $1, muc)
+          command, *command_message = $1.split(" ")
+          message = Message.new({
+            :from => firstname = nick.split(/ /).first,
+            :command => command,
+            :message => command_message.join(" "),
+            :muc => muc
+          })
+          process(message)
         rescue => e
           warn "exception: #{e.inspect}"
         end
       end
+      mucs << muc
     end
     self
   end
 
-  def process(from, command, muc)
-    warn "command: #{from}> #{command}"
-    firstname = from.split(/ /).first
-    Bot::Command.delegate_command(command, firstname, self, muc)
+  def process(message)
+    warn "command: #{message.from}> #{message.command}"
+    Bot::Command.delegate_command(message)
   end
 
-  def respond(msg, muc)
-    muc.send Jabber::Message.new(muc.room, msg)
-  end
-
-  def run
-    warn "running"
-    loop { sleep 1 }
-  end
-
-  def self.run(config)
-    bot = Bot.new(config).connect
-    bot.run
-  end
 end
