@@ -7,3 +7,4 @@ basic:
   jid: 'xxxx@example.com'
   password: 'supersecret'
   debug: false
+live_id: "123abc"

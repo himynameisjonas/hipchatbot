@@ -10,8 +10,8 @@ require 'lib/muc-patch'
 class Bot
   require 'lib/command'
   require 'lib/message'
-  
-  attr_accessor :config, :client, :mucs
+  require 'lib/config'
+  attr_accessor :client, :mucs
   
   COMMANDS = {}
   MONITORS = []
@@ -20,11 +20,10 @@ class Bot
     require File.expand_path(File.join(File.dirname(__FILE__), "..", file))
   end
 
-  def initialize(settings)
-    self.config = settings['basic']
-    self.client = Jabber::Client.new(config['jid'])
+  def initialize
+    self.client = Jabber::Client.new(Bot::Config.basic.jid)
     self.mucs   = []
-    if config['debug']
+    if Bot::Config.basic.debug
       Jabber.logger = Logger.new(STDOUT)
       Jabber.debug = true
     end
@@ -42,13 +41,13 @@ class Bot
 
   def connect
     client.connect
-    client.auth(config['password'])
+    client.auth(Bot::Config.basic.password)
     client.send(Jabber::Presence.new.set_type(:available))
   end
   
   def join_rooms
-    config['rooms'].each do |room|
-      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + config['nick'])
+    Bot::Config.basic.rooms.each do |room|
+      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + Bot::Config.basic.nick)
       muc.on_message do |time, nick, text|
         begin
           handle_message nick, text, muc
@@ -61,12 +60,12 @@ class Bot
   end
 
   def handle_message(nick, text, muc)
-    salutation = config['nick'].split(/\s+/).first
+    salutation = Bot::Config.basic.nick.split(/\s+/).first
     message = Message.new({
       :message => text,
       :muc => muc
     })
-    Bot::MONITORS.each {|command| command.respond(message)} unless nick == config['nick']
+    Bot::MONITORS.each {|command| command.respond(message)} unless nick == Bot::Config.basic.nick
     return unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
     command, *command_message = $1.split(" ")
     message = Message.new({

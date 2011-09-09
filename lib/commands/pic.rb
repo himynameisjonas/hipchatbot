@@ -3,7 +3,7 @@ class Pic < Bot::Command
   
   def self.respond(message)
     begin
-      json = JSON.parse(open("http://api.search.live.net/json.aspx?AppId=8F2285BC4C3351C997BE97DCBAAC449E79B5947A&Query=#{CGI.escape "\"#{message.message}\""}&Sources=Image&Version=2.0&Adult=Moderate&Image.Count=1").read)
+      json = JSON.parse(open("http://api.search.live.net/json.aspx?AppId=#{Bot::Config.live_id}&Query=#{CGI.escape "\"#{message.message}\""}&Sources=Image&Version=2.0&Adult=Moderate&Image.Count=1").read)
       image = json["SearchResponse"]["Image"]["Results"][0]["Thumbnail"]["Url"]
       message.send("#{image}#.jpg")
     rescue NoMethodError
