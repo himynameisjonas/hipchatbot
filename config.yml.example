@@ -7,4 +7,10 @@ basic:
   jid: 'xxxx@example.com'
   password: 'supersecret'
   debug: false
+assistly:
+  consumer: "xxx"
+  consumer_secret: "xxx"
+  site: "https://example.assistly.com"
+  oauth_token: "xx"
+  oauth_token_secret: "xx"
 live_id: "123abc"
