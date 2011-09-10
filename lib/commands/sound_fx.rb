@@ -6,7 +6,7 @@ class SoundFx < Bot::Command
     when "easy"
       play_file "easy.mp3"
     when "friday"
-     play_file "friday.mp3"
+     Time.now.wday == 5 ? play_file("friday.mp3") : message.send("Today != Friday")
     when "rimshot"
       play_file "rimshot.mp3"
     when "sad"
