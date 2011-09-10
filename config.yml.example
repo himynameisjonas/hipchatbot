@@ -13,4 +13,7 @@ assistly:
   site: "https://example.assistly.com"
   oauth_token: "xx"
   oauth_token_secret: "xx"
+chartbeat:
+  domain: "example.com"
+  key: "xxx"
 live_id: "123abc"
