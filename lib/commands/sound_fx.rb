@@ -1,10 +1,12 @@
 class SoundFx < Bot::Command
-  respond_to "easy", "rimshot", "sad", "yeah"
+  respond_to "easy", "friday", "rimshot", "sad", "yeah"
 
   def self.respond(message)
     case message.command
     when "easy"
       play_file "easy.mp3"
+    when "friday"
+     play_file "friday.mp3"
     when "rimshot"
       play_file "rimshot.mp3"
     when "sad"
