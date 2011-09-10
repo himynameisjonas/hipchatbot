@@ -1,6 +1,8 @@
 class Pic < Bot::Command
   respond_to "pic"
-  
+  require 'open-uri'
+  require 'json'
+
   def self.respond(message)
     begin
       json = JSON.parse(open("http://api.search.live.net/json.aspx?AppId=#{Bot::Config.live_id}&Query=#{CGI.escape "\"#{message.message}\""}&Sources=Image&Version=2.0&Adult=Moderate&Image.Count=1").read)

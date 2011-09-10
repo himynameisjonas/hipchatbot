@@ -2,9 +2,6 @@ require 'rubygems'
 require "bundler/setup"
 require 'xmpp4r'
 require 'xmpp4r/muc/helper/simplemucclient'
-require 'open-uri'
-require 'cgi'
-require 'json'
 require 'lib/muc-patch'
 
 class Bot
@@ -27,7 +24,6 @@ class Bot
       Jabber.logger = Logger.new(STDOUT)
       Jabber.debug = true
     end
-    self
   end
 
   def run

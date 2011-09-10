@@ -1,5 +1,6 @@
 class Stats < Bot::Command
   respond_to "online"
+  require 'json'
   CHARTBEAT_URL = "http://api.chartbeat.com"
   
   def self.respond(message)

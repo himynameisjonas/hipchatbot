@@ -1,6 +1,7 @@
 class Assistly < Bot::Command
   respond_to "support"
   require 'oauth'
+  require 'json'
 
   def self.respond(message)
     case message.command
