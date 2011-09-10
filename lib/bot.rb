@@ -74,7 +74,7 @@ class Bot
   end
 
   def process_commands(message)
-    warn "command: #{message.from}> #{message.command}"
+    warn "command: #{message.muc.jid.to_s.split("@").first} > #{message.from} > #{message.command} #{message.message}"
     Bot::Command.delegate_command(message)
   end
 

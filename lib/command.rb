@@ -17,7 +17,11 @@ class Bot::Command
     warn "delegates command #{message.command}"
     return false if Bot::COMMANDS[message.command].nil?
     Thread.new do
-      Bot::COMMANDS[message.command].respond(message)
+      begin
+        Bot::COMMANDS[message.command].respond(message)
+      rescue => e
+        message.send "Something went wrong: #{e}"
+      end
     end
   end
 end
