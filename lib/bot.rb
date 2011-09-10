@@ -33,6 +33,7 @@ class Bot
   def run
     connect
     join_rooms
+    monitor_rooms
     warn "running"
     loop { sleep 1 }
   end
@@ -46,8 +47,13 @@ class Bot
   end
 
   def join_rooms
-    Bot::Config.basic.rooms.each do |room|
-      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + Bot::Config.basic.nick)
+    self.mucs = Bot::Config.basic.rooms.map do |room|
+      Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + Bot::Config.basic.nick)
+    end
+  end
+
+  def monitor_rooms
+    mucs.each do |muc|
       muc.on_message do |time, nick, text|
         begin
           handle_message nick, text, muc
@@ -55,7 +61,6 @@ class Bot
           warn "exception: #{e.inspect}"
         end
       end
-      mucs << muc
     end
   end
 
