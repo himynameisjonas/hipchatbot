@@ -1,12 +1,12 @@
 class Help < Bot::Command
   respond_to "help", "?"
 
-  def self.respond(message)
-    message.send("Available commands:\n#{help_text}")
-  end
-
   def self.description
     "This message"
+  end
+
+  def self.respond(message)
+    message.send("Available commands:\n#{help_text}")
   end
 
   private

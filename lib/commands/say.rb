@@ -1,6 +1,10 @@
 class Say < Bot::Command
   respond_to "say", "whisper", "sing"
-  
+
+  def self.description
+    "Say it with words"
+  end
+
   def self.respond(message)
     case message.command
     when "whisper"
@@ -10,9 +14,5 @@ class Say < Bot::Command
     when "say"
       system "say", message.message  
     end
-  end
-
-  def self.description
-    "Say it with words"
   end
 end

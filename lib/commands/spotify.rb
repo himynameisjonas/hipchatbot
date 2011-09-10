@@ -3,6 +3,10 @@ class Spotify < Bot::Command
   require 'appscript'
   require 'json'
 
+  def self.description
+    "Controll Spotify"
+  end
+
   def self.respond(message)
     case message.command
     when "next"
@@ -33,10 +37,6 @@ class Spotify < Bot::Command
       hide_spotify
       message.send("Now playing: #{current_track}")
     end
-  end
-
-  def self.description
-    "Controll Spotify"
   end
 
   def self.current_track

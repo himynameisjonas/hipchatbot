@@ -3,6 +3,10 @@ class Pic < Bot::Command
   require 'open-uri'
   require 'json'
 
+  def self.description
+    "Post a picture from search string"
+  end
+
   def self.respond(message)
     begin
       json = JSON.parse(open("http://api.search.live.net/json.aspx?AppId=#{Bot::Config.live_id}&Query=#{CGI.escape "\"#{message.message}\""}&Sources=Image&Version=2.0&Adult=Moderate&Image.Count=1").read)
@@ -11,9 +15,5 @@ class Pic < Bot::Command
     rescue NoMethodError
       message.send("sorry, no matches")
     end
-  end
-
-  def self.description
-    "Post a picture from search string"
   end
 end

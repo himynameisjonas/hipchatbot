@@ -1,6 +1,10 @@
 class SoundFx < Bot::Command
   respond_to "easy", "friday", "rimshot", "sad", "yeah"
 
+  def self.description
+    "Awesome audio fx!"
+  end
+
   def self.respond(message)
     case message.command
     when "easy"
@@ -14,10 +18,6 @@ class SoundFx < Bot::Command
     when "yeah"
       play_file "yeah.mp3"
     end
-  end
-
-  def self.description
-    "Awesome audio fx!"
   end
 
   private

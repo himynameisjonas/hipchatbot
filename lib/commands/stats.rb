@@ -2,16 +2,16 @@ class Stats < Bot::Command
   respond_to "online"
   require 'json'
   CHARTBEAT_URL = "http://api.chartbeat.com"
-  
+
+  def self.description
+    "Stats"
+  end
+
   def self.respond(message)
     case message.command
     when "online"
       message.send "Online right now: #{online_right_now}"
     end
-  end
-
-  def self.description
-    "Stats"
   end
 
   private

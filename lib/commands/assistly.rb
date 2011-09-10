@@ -3,6 +3,10 @@ class Assistly < Bot::Command
   require 'oauth'
   require 'json'
 
+  def self.description
+    "try 'support q'"
+  end
+
   def self.respond(message)
     case message.command
     when "support"
@@ -13,10 +17,6 @@ class Assistly < Bot::Command
         message.send cases["results"].map{|c| "* #{c['case']['subject']}\n"}.join("")
       end
     end
-  end
-
-  def self.description
-    "try 'support q'"
   end
 
   private

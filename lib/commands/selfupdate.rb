@@ -1,5 +1,10 @@
 class Selfupdate < Bot::Command
   respond_to "selfupdate"
+
+  def self.description
+    "Do a 'git pull' and restart Flower"
+  end
+
   def self.respond(message)
     system("git fetch")
     diff = `git log --decorate --left-right --graph --cherry-pick --oneline master...origin/master`
@@ -11,9 +16,5 @@ class Selfupdate < Bot::Command
       system("git pull --rebase")
       exec("rake run &")
     end
-  end
-  
-  def self.description
-    "Do a 'git pull' and restart Flower"
   end
 end

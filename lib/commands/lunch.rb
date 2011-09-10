@@ -3,12 +3,12 @@ class Lunch < Bot::Command
   require 'nokogiri'
   require 'open-uri'
 
-  def self.respond(message)
-    message.send(fetch_ringos)
-  end
-
   def self.description
     "Lunch menues"
+  end
+
+  def self.respond(message)
+    message.send(fetch_ringos)
   end
 
   private
