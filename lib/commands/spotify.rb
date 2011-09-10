@@ -23,11 +23,11 @@ class Spotify < Bot::Command
       message.send("Started playing: #{current_track.name.get} - #{current_track.artist.get}")
     when "track"
       current_track = Appscript::app("Spotify").current_track
-      message.send("Playing: #{current_track.name.get} - #{current_track.artist.get}")      
+      message.send("Playing: #{current_track.name.get} - #{current_track.artist.get}")
     end
   end
 
   def self.description
-    "Controll spotify"
+    "Controll Spotify"
   end
 end
