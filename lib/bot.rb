@@ -44,7 +44,7 @@ class Bot
     client.auth(Bot::Config.basic.password)
     client.send(Jabber::Presence.new.set_type(:available))
   end
-  
+
   def join_rooms
     Bot::Config.basic.rooms.each do |room|
       muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + Bot::Config.basic.nick)
@@ -62,24 +62,24 @@ class Bot
   def handle_message(nick, text, muc)
     salutation = Bot::Config.basic.nick.split(/\s+/).first
     message = Message.new({
+      :from => nick.split(/ /).first,
       :message => text,
       :muc => muc
     })
-    Bot::MONITORS.each {|command| command.respond(message)} unless nick == Bot::Config.basic.nick
+    process_monitors(message) unless nick == Bot::Config.basic.nick
     return unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
-    command, *command_message = $1.split(" ")
-    message = Message.new({
-      :from => firstname = nick.split(/ /).first,
-      :command => command,
-      :message => command_message.join(" "),
-      :muc => muc
-    })
-    process(message)
+    message.command, message.message = $1.split(" ", 2)
+    process_commands(message)
   end
 
-  def process(message)
+  def process_commands(message)
     warn "command: #{message.from}> #{message.command}"
     Bot::Command.delegate_command(message)
   end
 
+  def process_monitors(message)
+    Bot::MONITORS.each do |monitor|
+      monitor.respond(message)
+    end
+  end
 end
