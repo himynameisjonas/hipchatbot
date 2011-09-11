@@ -6,3 +6,4 @@ gem 'rb-appscript'
 gem 'twss'
 gem 'nokogiri'
 gem 'oauth'
+gem 'rspec', "~> 2.6.0"
