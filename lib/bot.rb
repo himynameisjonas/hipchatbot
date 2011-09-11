@@ -2,7 +2,6 @@ require 'rubygems'
 require "bundler/setup"
 require 'xmpp4r'
 require 'xmpp4r/muc/helper/simplemucclient'
-require 'lib/muc-patch'
 
 class Bot
   require 'lib/command'
@@ -19,6 +18,7 @@ class Bot
 
   def initialize
     self.client = Jabber::Client.new(Bot::Config.basic.jid)
+    client.jid.resource = "bot"
     self.mucs   = []
     if Bot::Config.basic.debug
       Jabber.logger = Logger.new(STDOUT)
