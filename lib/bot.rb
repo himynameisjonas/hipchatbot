@@ -30,6 +30,7 @@ class Bot
     connect
     join_rooms
     monitor_rooms
+    monitor_one_to_one
     warn "running"
     loop { sleep 1 }
   end
@@ -64,6 +65,7 @@ class Bot
       connect
       join_rooms
       monitor_rooms
+      monitor_one_to_one
     rescue => e
       warn "connection failed, trying again in 10 seconds"
       sleep 10
@@ -80,7 +82,7 @@ class Bot
   def monitor_rooms
     mucs.each do |muc|
       muc.on_join do |time, nick|
-        Message.new(:muc => muc).send "Welcome #{nick}!"
+        Message.new(:muc_or_client => muc).send "Welcome #{nick}!"
       end
       muc.on_message do |time, nick, text|
         begin
@@ -92,12 +94,25 @@ class Bot
     end
   end
 
-  def handle_message(nick, text, muc)
+  def monitor_one_to_one
+    client.add_message_callback do |message|
+      begin
+        if message.type == :chat and message.body and message.from != Bot::Config.basic.jid
+          handle_message message.from.to_s, message.body, client, message.from
+        end
+      rescue => e
+        warn "exception: #{e.inspect}"
+      end
+    end
+  end
+
+  def handle_message(nick, text, muc_or_client, one_to_one = nil)
     salutation = Bot::Config.basic.nick.split(/\s+/).first
     message = Message.new({
       :from => nick.split(/ /).first,
       :message => text,
-      :muc => muc
+      :muc_or_client => muc_or_client,
+      :one_to_one => one_to_one
     })
     process_monitors(message) unless nick == Bot::Config.basic.nick
     return unless text =~ /^#{salutation}:*\s+(.+)$/i or text =~ /^!(.+)$/
@@ -106,7 +121,7 @@ class Bot
   end
 
   def process_commands(message)
-    warn "command: #{message.muc.jid.to_s.split("@").first} > #{message.from} > #{message.command} #{message.message}"
+    warn "command: #{message.muc_or_client.jid.to_s.split("@").first} > #{message.from} > #{message.command} #{message.message}"
     Bot::Command.delegate_command(message)
   end
 
