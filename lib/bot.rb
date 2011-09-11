@@ -32,7 +32,7 @@ class Bot
     monitor_rooms
     monitor_one_to_one
     warn "running"
-    loop { sleep 1 }
+    Thread.stop
   end
 
   private
