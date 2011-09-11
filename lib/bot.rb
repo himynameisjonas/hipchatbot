@@ -37,9 +37,38 @@ class Bot
   private
 
   def connect
+    warn "connecting...."
     client.connect
     client.auth(Bot::Config.basic.password)
     client.send(Jabber::Presence.new.set_type(:available))
+    client.on_exception do
+      warn "Connection lost, trying to reconnect in 10 seconds"
+      sleep 10
+      reconnect
+    end
+  rescue => e
+    warn "connection failed, trying again in 10 seconds"
+    sleep 10
+    reconnect
+  end
+
+  def reconnect
+    begin
+      mucs.map(&:exit) unless musc.empty?
+      client.close!
+    rescue => e
+      warn "failed to close"
+    end
+    begin
+      self.client = Jabber::Client.new(Bot::Config.basic.jid)
+      connect
+      join_rooms
+      monitor_rooms
+    rescue => e
+      warn "connection failed, trying again in 10 seconds"
+      sleep 10
+      reconnect
+    end
   end
 
   def join_rooms
