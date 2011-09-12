@@ -83,9 +83,6 @@ class Bot
 
   def monitor_rooms
     mucs.each do |muc|
-      muc.on_join do |time, nick|
-        Message.new(:muc_or_client => muc).send "Welcome #{nick}!"
-      end
       muc.on_message do |time, nick, text|
         begin
           handle_message nick, text, muc
