@@ -16,16 +16,16 @@ class System < Bot::Command
         message.send("Applying updates")
         message.send(diff)
         system("git pull --rebase")
-        reboot
+        reboot(message)
       end
     when "reboot"
-      reboot
+      reboot(message)
     end
   end
 
   private
 
-  def self.reboot
+  def self.reboot(message)
     message.send("Rebooting...")
     exec("rake run")
   end
