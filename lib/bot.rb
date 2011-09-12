@@ -4,10 +4,11 @@ require 'xmpp4r'
 require 'xmpp4r/muc/helper/simplemucclient'
 
 class Bot
+  require 'lib/connection'
   require 'lib/command'
   require 'lib/message'
   require 'lib/config'
-  attr_accessor :client, :mucs
+  attr_accessor :connection
   
   COMMANDS = {}
   MONITORS = []
@@ -17,9 +18,7 @@ class Bot
   end
 
   def initialize
-    self.client = Jabber::Client.new(Bot::Config.basic.jid)
-    client.jid.resource = "bot"
-    self.mucs   = []
+    @connection = Bot::Connection.new
     if Bot::Config.basic.debug
       Jabber.logger = Logger.new(STDOUT)
       Jabber.debug = true
@@ -27,8 +26,8 @@ class Bot
   end
 
   def run
-    connect
-    join_rooms
+    @connection.connect
+    @connection.join_rooms
     monitor_rooms
     monitor_one_to_one
     warn "running"
@@ -37,52 +36,8 @@ class Bot
 
   private
 
-  def connect
-    warn "connecting...."
-    client.connect
-    client.auth(Bot::Config.basic.password)
-    client.send(Jabber::Presence.new.set_type(:available))
-    client.on_exception do
-      warn "Connection lost, trying to reconnect in 10 seconds"
-      sleep 10
-      reconnect
-    end
-  rescue => e
-    warn "connection failed, trying again in 10 seconds"
-    sleep 10
-    reconnect
-  end
-
-  def reconnect
-    begin
-      mucs.map(&:exit) unless musc.empty?
-      client.close!
-    rescue => e
-      warn "failed to close"
-    end
-    begin
-      self.client = Jabber::Client.new(Bot::Config.basic.jid)
-      connect
-      join_rooms
-      monitor_rooms
-      monitor_one_to_one
-    rescue => e
-      warn "connection failed, trying again in 10 seconds"
-      sleep 10
-      reconnect
-    end
-  end
-
-  def join_rooms
-    self.mucs = Bot::Config.basic.rooms.map do |room|
-      muc = Jabber::MUC::SimpleMUCClient.new(client).join(room + '/' + Bot::Config.basic.nick)
-      muc.send Jabber::Message.new muc.room, "/me is online and waiting for commands"
-      muc
-    end
-  end
-
   def monitor_rooms
-    mucs.each do |muc|
+    @connection.mucs.each do |muc|
       muc.on_message do |time, nick, text|
         begin
           handle_message nick, text, muc
@@ -94,10 +49,10 @@ class Bot
   end
 
   def monitor_one_to_one
-    client.add_message_callback do |message|
+    @connection.client.add_message_callback do |message|
       begin
         if message.type == :chat and message.body and message.from != Bot::Config.basic.jid
-          handle_message message.from.to_s, message.body, client, message.from
+          handle_message message.from.to_s, message.body, @connection.client, message.from
         end
       rescue => e
         warn "exception: #{e.inspect}"
