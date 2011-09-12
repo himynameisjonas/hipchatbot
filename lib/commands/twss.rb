@@ -1,5 +1,5 @@
 class Twss < Bot::Command
-  monitor_all
+  # monitor_all
 
   def self.description
     "That's what she said!"
