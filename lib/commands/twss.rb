@@ -6,7 +6,7 @@ class Twss < Bot::Command
   end
 
   require 'twss'
-  TWSS.threshold = 5.0
+  TWSS.threshold = 8.0
   def self.respond(message)
     message.send("That's what she said!") if TWSS(message.message)
   end
