@@ -34,7 +34,7 @@ class Bot::Connection
 
   def join_rooms
     @mucs = Bot::Config.basic.rooms.map do |room|
-      muc = Jabber::MUC::SimpleMUCClient.new(@client).join(room + '/' + Bot::Config.basic.nick)
+      muc = Jabber::MUC::SimpleMUCClient.new(@client).join(room.jid + '/' + Bot::Config.basic.nick)
       muc.send Jabber::Message.new muc.room, "/me is online and waiting for commands"
       muc
     end

@@ -18,7 +18,8 @@ class Bot::Message
 
   def send_html(message)
     raise "This command only works in a room" if one_to_one
-    response = api.rooms_message(muc_or_client.room.split("_",2).last, Bot::Config.basic.nick, message, 0, "random")
+    room_id = Bot::Config.basic.rooms.select{|room| room.jid.split("@").first == muc_or_client.room}.first.room_id
+    response = api.rooms_message(room_id, Bot::Config.basic.nick, message, 0, "random")
     if response.code != 200
       raise response.parsed_response["error"]["message"]
     end
