@@ -1,5 +1,5 @@
 class Spotify < Bot::Command
-  respond_to "next", "prev", "play", "pause", "playing", "track", "album"
+  respond_to "next", "prev", "play", "pause", "playing", "track", "album", "volume"
   require 'appscript'
   require 'json'
 
@@ -36,7 +36,31 @@ class Spotify < Bot::Command
       play_href search_for_album message.message
       hide_spotify
       message.send("Now playing: #{current_track}")
+    when "volume"
+      if validate_message(message.message)
+        adjust_volume(message.message)
+      else
+        message.send("Please use only + or -")
+      end
     end
+  end
+
+  def self.validate_message(up_or_down)
+    up_or_down =~ /^[\+]+$/ or up_or_down =~ /^[\-]+$/
+  end
+
+  def self.adjust_volume(up_or_down)
+    amount = up_or_down.length * 10
+    new_volume = up_or_down[0,1] == "+" ? get_volume + amount : get_volume - amount
+    set_volume new_volume
+  end
+
+  def self.get_volume
+    Appscript::app("Spotify").sound_volume.get
+  end
+
+  def self.set_volume(volume)
+    Appscript::app("Spotify").sound_volume.set volume
   end
 
   def self.current_track
