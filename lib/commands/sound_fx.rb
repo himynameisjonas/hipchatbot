@@ -8,15 +8,29 @@ class SoundFx < Bot::Command
   def self.respond(message)
     case message.command
     when "easy"
-      play_file "easy.mp3"
+      Spotify.lower_spotify do
+        play_file "easy.mp3"
+      end
     when "friday"
-     Time.now.wday == 5 ? play_file("friday.mp3") : message.send("Today != Friday")
+      if Time.now.wday == 5
+        Spotify.lower_spotify do
+          play_file("friday.mp3")
+        end
+      else
+        message.send("Today != (rebeccablack)")
+      end
     when "rimshot"
-      play_file "rimshot.mp3"
+      Spotify.lower_spotify do
+        play_file "rimshot.mp3"
+      end
     when "sad"
-      play_file "sadtrombone.mp3"
+      Spotify.lower_spotify do
+        play_file "sadtrombone.mp3"
+      end
     when "yeah"
-      play_file "yeah.mp3"
+      Spotify.lower_spotify do
+        play_file "yeah.mp3"
+      end
     end
   end
 

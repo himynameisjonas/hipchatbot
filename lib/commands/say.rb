@@ -8,11 +8,17 @@ class Say < Bot::Command
   def self.respond(message)
     case message.command
     when "whisper"
-      system "say", "-vwhisper", message.message
+      Spotify.lower_spotify do
+        system "say", "-vwhisper", message.message
+      end
     when "sing"
-      system "say", "-vcello", message.message  
+      Spotify.lower_spotify do
+        system "say", "-vcello", message.message
+      end
     when "say"
-      system "say", message.message  
+      Spotify.lower_spotify do
+        system "say", message.message
+      end
     end
   end
 end

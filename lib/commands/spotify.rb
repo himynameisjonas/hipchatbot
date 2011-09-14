@@ -63,6 +63,13 @@ class Spotify < Bot::Command
     Appscript::app("Spotify").sound_volume.set volume
   end
 
+  def self.lower_spotify
+    current_volume = get_volume
+    set_volume [30, current_volume].min
+    yield
+    set_volume current_volume
+  end
+
   def self.current_track
     current_track = Appscript::app("Spotify").current_track
     "#{current_track.artist.get} - #{current_track.name.get}"
