@@ -1,7 +1,9 @@
 class Spotify < Bot::Command
-  respond_to "next", "prev", "play", "pause", "playing", "track", "album"
+  respond_to "next", "prev", "play", "pause", "playing", "track", "album", "queue"
   require 'appscript'
   require 'json'
+
+  QUEUE = []
 
   def self.description
     "Controll Spotify"
@@ -27,15 +29,16 @@ class Spotify < Bot::Command
       message.send("Playing: #{current_track}")
     when "track"
       return message.send "@#{message.from} please add a search query" unless message.message
-      play_href search_for_track message.message
-      hide_spotify
-      message.send("Now playing: #{current_track}")
+      QUEUE << search_for_track(message.message)
+      message.send "added song to queue"
     when "album"
       return message.send "@#{message.from} please add a search query" unless message.message
       message.send "currently broken'"
       play_href search_for_album message.message
       hide_spotify
       message.send("Now playing: #{current_track}")
+    when "queue"
+      message.send(QUEUE.inspect)
     end
   end
 
@@ -49,6 +52,25 @@ class Spotify < Bot::Command
       set_volume i
     end
   end
+
+  def self.play_from_queue
+    unless QUEUE.empty?
+      sleep Appscript::app("Spotify").current_track.duration.get-Appscript::app("Spotify").player_position.get
+      play_href QUEUE.shift
+      play_from_queue
+    else
+      sleep 3
+      play_from_queue
+    end
+  end
+
+  def self.start_queue
+    Thread.new do
+      play_from_queue
+    end
+  end
+
+  start_queue
 
   private
 
