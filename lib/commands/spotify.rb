@@ -1,5 +1,5 @@
 class Spotify < Bot::Command
-  respond_to "next", "prev", "play", "pause", "playing", "track", "album", "volume"
+  respond_to "next", "prev", "play", "pause", "playing", "track", "album"
   require 'appscript'
   require 'json'
 
@@ -36,38 +36,24 @@ class Spotify < Bot::Command
       play_href search_for_album message.message
       hide_spotify
       message.send("Now playing: #{current_track}")
-    when "volume"
-      if validate_message(message.message)
-        adjust_volume(message.message)
-      else
-        message.send("Please use only + or -")
-      end
     end
   end
 
-  def self.validate_message(up_or_down)
-    up_or_down =~ /^[\+]+$/ or up_or_down =~ /^[\-]+$/
+  def self.lower_spotify
+    100.downto(30) do |i|
+      set_volume i
+    end
+    sleep 0.2
+    yield
+    30.upto(100) do |i|
+      set_volume i
+    end
   end
 
-  def self.adjust_volume(up_or_down)
-    amount = up_or_down.length * 10
-    new_volume = up_or_down[0,1] == "+" ? get_volume + amount : get_volume - amount
-    set_volume new_volume
-  end
-
-  def self.get_volume
-    Appscript::app("Spotify").sound_volume.get
-  end
+  private
 
   def self.set_volume(volume)
     Appscript::app("Spotify").sound_volume.set volume
-  end
-
-  def self.lower_spotify
-    current_volume = get_volume
-    set_volume [30, current_volume].min
-    yield
-    set_volume current_volume
   end
 
   def self.current_track
@@ -76,7 +62,7 @@ class Spotify < Bot::Command
   end
 
   def self.hide_spotify
-    system "osascript", "-e", "tell application \"Finder\" to set visible of process \"Spotify\" to false"
+    Appscript::app("Finder").processes["Spotify"].visible.set(false)
   end
 
   def self.play_href(href)
