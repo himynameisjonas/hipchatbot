@@ -89,6 +89,8 @@ class Spotify < Bot::Command
 
   def self.play_href(href)
     system "open", href
+    sleep 0.1
+    hide_spotify
   end
 
   def self.search_for_track(query)
