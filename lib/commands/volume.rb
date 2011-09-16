@@ -10,7 +10,6 @@ class Volume < Bot::Command
   def self.respond(message)
     if validate_message(message.message)
       adjust_volume(message.message)
-      message.send("new: #{get_volume}")
     else
       message.send("Please use only + or -")
     end
