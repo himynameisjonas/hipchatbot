@@ -43,13 +43,14 @@ class Spotify < Bot::Command
   end
 
   def self.lower_spotify
-    100.downto(30) do |i|
+    100.downto(50) do |i|
       set_volume i
+      sleep 0.001
     end
-    sleep 0.2
     yield
-    30.upto(100) do |i|
+    50.upto(100) do |i|
       set_volume i
+      sleep "0.00#{i}".to_f
     end
   end
 
